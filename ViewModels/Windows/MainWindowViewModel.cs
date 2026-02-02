@@ -13,9 +13,9 @@ namespace PlmXmlSyntax.ViewModels.Windows
         {
             new NavigationViewItem()
             {
-                Content = "Home",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
-                TargetPageType = typeof(Views.Pages.DashboardPage)
+                Content = "Importer",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowImport24 },
+                TargetPageType = typeof(Views.Pages.ImporterPage)
             },
             new NavigationViewItem()
             {
@@ -39,7 +39,7 @@ namespace PlmXmlSyntax.ViewModels.Windows
         [ObservableProperty]
         private ObservableCollection<MenuItem> _trayMenuItems = new()
         {
-            new MenuItem { Header = "Home", Tag = "tray_home" }
+            new MenuItem { Header = "Importer", Tag = "tray_home" }
         };
     }
 }

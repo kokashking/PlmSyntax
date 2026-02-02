@@ -3,11 +3,11 @@ using Wpf.Ui.Abstractions.Controls;
 
 namespace PlmXmlSyntax.Views.Pages
 {
-    public partial class DashboardPage : INavigableView<DashboardViewModel>
+    public partial class ImporterPage : INavigableView<ImporterViewModel>
     {
-        public DashboardViewModel ViewModel { get; }
+        public ImporterViewModel ViewModel { get; }
 
-        public DashboardPage(DashboardViewModel viewModel)
+        public ImporterPage(ImporterViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

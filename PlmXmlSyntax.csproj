@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="_DevHelp\PlmXml.cs" />
+    <Compile Remove="_DevHelp\PlmXmlGenerator.cs" />
+    <Compile Remove="_DevHelp\PlmXmlParser.cs" />
+    <Compile Remove="_DevHelp\PlmXmlParserFactory.cs" />
+    <Compile Remove="_DevHelp\plmxml_parse_gen.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="wpfui-icon.ico" />
   </ItemGroup>
 
@@ -18,12 +26,20 @@
     <PackageReference Include="WPF-UI" Version="4.2.0" />
     <PackageReference Include="WPF-UI.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0 "/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0 " />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\wpfui-icon-256.png" />
     <None Remove="Assets\wpfui-icon-1024.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="_DevHelp\PlmXml.cs" />
+    <None Include="_DevHelp\PlmXmlGenerator.cs" />
+    <None Include="_DevHelp\PlmXmlParser.cs" />
+    <None Include="_DevHelp\PlmXmlParserFactory.cs" />
+    <None Include="_DevHelp\plmxml_parse_gen.cs" />
   </ItemGroup>
 
   <ItemGroup>

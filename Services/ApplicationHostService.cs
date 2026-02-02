@@ -50,7 +50,7 @@ namespace PlmXmlSyntax.Services
                 )!;
                 _navigationWindow!.ShowWindow();
 
-                _navigationWindow.Navigate(typeof(Views.Pages.DashboardPage));
+                _navigationWindow.Navigate(typeof(Views.Pages.ImporterPage));
             }
 
             await Task.CompletedTask;

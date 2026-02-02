@@ -1,6 +1,6 @@
 ﻿namespace PlmXmlSyntax.ViewModels.Pages
 {
-    public partial class DashboardViewModel : ObservableObject
+    public partial class ImporterViewModel : ObservableObject
     {
         [ObservableProperty]
         private int _counter = 0;
