@@ -46,6 +46,8 @@ namespace PlmXmlSyntax
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
 
+                services.AddSingleton<IPlmXmlService, PlmXmlService>();
+
                 services.AddSingleton<ImporterPage>();
                 services.AddSingleton<ImporterViewModel>();
                 services.AddSingleton<DataPage>();
