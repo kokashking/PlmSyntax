@@ -16,44 +16,69 @@
   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
   mc:Ignorable="d"
 >
-  <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
+  <Page.Resources>
+    <!-- Removed ListToStringConverter as we now store as string -->
+  </Page.Resources>
+
+  <DockPanel Margin="16">
 
     <ui:Button
-      Grid.Row="0"
+      DockPanel.Dock="Top"
       Command="{Binding ViewModel.ImportFileCommand, Mode=OneWay}"
       Content="Import PLMXML"
       Icon="ArrowImport24"
-      HorizontalAlignment="Center"
-      Margin="0,0,0,20"
+      HorizontalAlignment="Left"
+      Margin="0,0,0,12"
     />
 
     <TextBlock
-      Grid.Row="1"
+      DockPanel.Dock="Top"
       Text="{Binding ViewModel.FilePath, Mode=OneWay}"
-      HorizontalAlignment="Center"
-      Margin="0,0,0,10"
+      HorizontalAlignment="Left"
+      Margin="0,0,0,8"
       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+      TextTrimming="CharacterEllipsis"
     />
 
-    <TextBlock
-        Grid.Row="2"
-        Text="{Binding ViewModel.Status, Mode=OneWay}"
-        HorizontalAlignment="Center"
-        FontWeight="SemiBold"
-    />
-    
-    <ProgressBar 
-        Grid.Row="3"
-        IsIndeterminate="True" 
-        Visibility="{Binding ViewModel.IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-        Width="200"
-        Height="5"
-        Margin="0,20,0,0"
-    />
-  </Grid>
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,8">
+        <TextBlock
+            Text="{Binding ViewModel.Status, Mode=OneWay}"
+            FontWeight="SemiBold"
+            VerticalAlignment="Center"
+        />
+        <ProgressBar
+            IsIndeterminate="True"
+            Visibility="{Binding ViewModel.IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Width="120"
+            Height="4"
+            Margin="12,0,0,0"
+            VerticalAlignment="Center"
+        />
+    </StackPanel>
+
+    <Separator DockPanel.Dock="Top" Margin="0,4,0,12"/>
+
+    <!-- ListView with GridView for reliable virtualization -->
+    <ListView
+        ItemsSource="{Binding ViewModel.LeafNodes, Mode=OneWay}"
+        VirtualizingPanel.IsVirtualizing="True"
+        VirtualizingPanel.VirtualizationMode="Recycling"
+        ScrollViewer.CanContentScroll="True"
+        ScrollViewer.IsDeferredScrollingEnabled="True"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+        Background="Transparent"
+    >
+        <ListView.View>
+            <GridView>
+                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                <GridViewColumn Header="File" DisplayMemberBinding="{Binding FileName}" Width="280"/>
+                <GridViewColumn Header="Format" DisplayMemberBinding="{Binding Format}" Width="70"/>
+                <GridViewColumn Header="ID" DisplayMemberBinding="{Binding ProductRevisionViewId}" Width="80"/>
+                <GridViewColumn Header="Part Numbers" DisplayMemberBinding="{Binding PartNumbers}" Width="200"/>
+            </GridView>
+        </ListView.View>
+    </ListView>
+
+  </DockPanel>
 </Page>

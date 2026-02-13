@@ -7,7 +7,7 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:models="clr-namespace:PlmXmlSyntax.Models"
   xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-  Title="DataPage"
+  Title="ExplorerPage"
   d:DataContext="{d:DesignInstance local:DataPage,
                                      IsDesignTimeCreatable=False}"
   d:DesignHeight="450"
@@ -15,31 +15,40 @@
   ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
   ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-  ScrollViewer.CanContentScroll="False"
   mc:Ignorable="d"
 >
-  <Grid>
-    <ui:VirtualizingItemsControl
-      Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-      ItemsSource="{Binding ViewModel.Colors, Mode=OneWay}"
-      VirtualizingPanel.CacheLengthUnit="Item"
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <TextBlock
+        Grid.Row="0"
+        Text="{Binding ViewModel.Status, Mode=OneWay}"
+        FontWeight="SemiBold"
+        Margin="0,0,0,12"
+    />
+
+    <TreeView
+        Grid.Row="1"
+        ItemsSource="{Binding ViewModel.TreeNodes, Mode=OneWay}"
+        VirtualizingPanel.IsVirtualizing="True"
+        VirtualizingPanel.VirtualizationMode="Recycling"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+        Background="Transparent"
     >
-      <ItemsControl.ItemTemplate>
-        <DataTemplate DataType="{x:Type models:DataColor}">
-          <ui:Button
-            Width="80"
-            Height="80"
-            Margin="2"
-            Padding="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Appearance="Secondary"
-            Background="{Binding Color, Mode=OneWay}"
-            FontSize="25"
-            Icon="Fluent24"
-          />
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ui:VirtualizingItemsControl>
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate DataType="{x:Type models:TreeNodeViewModel}" ItemsSource="{Binding Children}">
+                <StackPanel Orientation="Horizontal" Margin="2">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Type, StringFormat=' [{0}]'}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                    <TextBlock Text="{Binding FileName, StringFormat=' - {0}'}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" VerticalAlignment="Center" Margin="4,0,0,0"
+                               Visibility="{Binding IsLeaf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
   </Grid>
 </Page>

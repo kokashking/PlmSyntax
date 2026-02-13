@@ -1,4 +1,4 @@
-﻿using PlmXmlSyntax.ViewModels.Pages;
+using PlmXmlSyntax.ViewModels.Pages;
 using Wpf.Ui.Abstractions.Controls;
 
 namespace PlmXmlSyntax.Views.Pages

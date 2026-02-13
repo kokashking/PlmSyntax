@@ -19,8 +19,8 @@ namespace PlmXmlSyntax.ViewModels.Windows
             },
             new NavigationViewItem()
             {
-                Content = "Data",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
+                Content = "Explorer",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.TreeDeciduous20 },
                 TargetPageType = typeof(Views.Pages.DataPage)
             }
         };

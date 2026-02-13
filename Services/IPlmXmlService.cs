@@ -1,11 +1,12 @@
-using System.IO;
-using System.Threading.Tasks;
 using PlmXmlSyntax.Models;
 
 namespace PlmXmlSyntax.Services;
 
 public interface IPlmXmlService
 {
+    PlmXml? CurrentPlmXml { get; }
+    List<LeafNodeInfo>? CurrentLeafNodes { get; }
+
     Task<PlmXml?> ParseAsync(string filePath);
-    Task TraverseTreeAsync(PlmXml plmXml);
+    Task<List<LeafNodeInfo>> TraverseTreeAsync(PlmXml plmXml);
 }
