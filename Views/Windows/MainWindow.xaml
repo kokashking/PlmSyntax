@@ -38,6 +38,7 @@
       IsPaneToggleVisible="True"
       MenuItemsSource="{Binding ViewModel.MenuItems, Mode=OneWay}"
       PaneDisplayMode="LeftFluent"
+      ScrollViewer.VerticalScrollBarVisibility="Disabled"
     >
       <ui:NavigationView.Header>
         <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,32,42,20" />
