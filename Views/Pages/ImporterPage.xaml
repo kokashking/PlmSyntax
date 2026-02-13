@@ -11,6 +11,9 @@
                                      IsDesignTimeCreatable=False}"
   d:DesignHeight="450"
   d:DesignWidth="800"
+  ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+  ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+  Foreground="{DynamicResource TextFillColorPrimaryBrush}"
   ScrollViewer.VerticalScrollBarVisibility="Disabled"
   mc:Ignorable="d"
 >
@@ -20,12 +23,12 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
-    <!-- Header Area: Row 0 -->
+    <!-- Header Area: Sticky -->
     <StackPanel Grid.Row="0" Background="{DynamicResource ApplicationBackgroundBrush}">
-        <Button
+        <ui:Button
           Command="{Binding ViewModel.ImportFileCommand, Mode=OneWay}"
           Content="Import PLMXML"
-          Padding="12,6"
+          Icon="ArrowImport24"
           HorizontalAlignment="Left"
           Margin="0,0,0,12"
         />
@@ -56,8 +59,8 @@
         <Separator Margin="0,4,0,12"/>
     </StackPanel>
 
-    <!-- List Area: Row 1 -->
-    <ListView
+    <!-- List Area: Scrollable with WPF-UI styling -->
+    <ui:ListView
         Grid.Row="1"
         x:Name="LeafNodesList"
         ItemsSource="{Binding ViewModel.LeafNodes, Mode=OneWay}"
@@ -69,63 +72,91 @@
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         ScrollViewer.HorizontalScrollBarVisibility="Auto"
         SelectionMode="Extended"
-        BorderThickness="1"
-        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+        BorderThickness="0"
     >
-        <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="MinHeight" Value="28" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#10FFFFFF" />
-                    </Trigger>
-                    <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="#20FFFFFF" />
-                    </Trigger>
-                </Style.Triggers>
+        <ui:ListView.Resources>
+            <!-- Style for GridView headers to make them darker and integrated -->
+            <Style TargetType="GridViewColumnHeader">
+                <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                <Setter Property="Padding" Value="8,4" />
+                <Setter Property="BorderThickness" Value="0,0,0,1" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
             </Style>
-        </ListView.ItemContainerStyle>
-        <ListView.View>
+        </ui:ListView.Resources>
+        <ui:ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="Margin" Value="2,1" />
+                <Setter Property="Padding" Value="4" />
+                <Setter Property="MinHeight" Value="32" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <Border x:Name="ItemBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    SnapsToDevicePixels="True">
+                                <GridViewRowPresenter VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource ControlFillColorTertiaryBrush}" />
+                                    <Setter TargetName="ItemBorder" Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ui:ListView.ItemContainerStyle>
+        <ui:ListView.View>
             <GridView>
                 <GridViewColumn Header="Name" Width="150">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" IsHitTestVisible="False" />
+                            <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextFillColorPrimaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
                 <GridViewColumn Header="File" Width="250">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding FileName}" IsHitTestVisible="False" />
+                            <TextBlock Text="{Binding FileName}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
                 <GridViewColumn Header="Format" Width="60">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Format}" IsHitTestVisible="False" />
+                            <TextBlock Text="{Binding Format}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
                 <GridViewColumn Header="ID" Width="80">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ProductRevisionViewId}" IsHitTestVisible="False" />
+                            <TextBlock Text="{Binding ProductRevisionViewId}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
                 <GridViewColumn Header="Part Numbers" Width="200">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding PartNumbers}" IsHitTestVisible="False" />
+                            <TextBlock Text="{Binding PartNumbers}" Foreground="{DynamicResource SystemAccentColorLight2Brush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
             </GridView>
-        </ListView.View>
-    </ListView>
+        </ui:ListView.View>
+    </ui:ListView>
   </Grid>
 </Page>
