@@ -14,6 +14,7 @@
   ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
   ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+  ScrollViewer.VerticalScrollBarVisibility="Disabled"
   mc:Ignorable="d"
 >
   <Page.Resources>
@@ -60,21 +61,31 @@
 
     <!-- ListView with GridView for reliable virtualization -->
     <ListView
+        x:Name="LeafNodesList"
         ItemsSource="{Binding ViewModel.LeafNodes, Mode=OneWay}"
         VirtualizingPanel.IsVirtualizing="True"
         VirtualizingPanel.VirtualizationMode="Recycling"
+        VirtualizingPanel.ScrollUnit="Pixel"
+        VirtualizingPanel.CacheLengthUnit="Item"
+        VirtualizingPanel.CacheLength="20,20"
         ScrollViewer.CanContentScroll="True"
-        ScrollViewer.IsDeferredScrollingEnabled="True"
+        ScrollViewer.VerticalScrollBarVisibility="Auto"
         BorderThickness="0"
         Background="Transparent"
         SelectionMode="Extended"
     >
+        <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
+            </ItemsPanelTemplate>
+        </ListView.ItemsPanel>
         <ListView.ItemContainerStyle>
             <Style TargetType="ListViewItem">
                 <Setter Property="Margin" Value="2,1" />
                 <Setter Property="Padding" Value="4" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ListViewItem">
@@ -83,7 +94,7 @@
                                     BorderBrush="Transparent"
                                     BorderThickness="1"
                                     CornerRadius="4"
-                                    Margin="0,1">
+                                    SnapsToDevicePixels="True">
                                 <GridViewRowPresenter VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                             </Border>
                             <ControlTemplate.Triggers>

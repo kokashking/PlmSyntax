@@ -69,7 +69,23 @@ namespace PlmXmlSyntax.ViewModels.Pages
                     Status = "Traversing tree...";
                     var results = await _plmXmlService.TraverseTreeAsync(plmXml);
 
-                    LeafNodes = new ObservableCollection<LeafNodeInfo>(results);
+                    Status = $"Populating UI \u2014 {results.Count} nodes...";
+                    
+                    // Chunked loading to keep UI responsive
+                    const int batchSize = 500;
+                    for (int i = 0; i < results.Count; i += batchSize)
+                    {
+                        var batch = results.Skip(i).Take(batchSize);
+                        foreach (var item in batch)
+                        {
+                            LeafNodes.Add(item);
+                        }
+                        
+                        // Give the UI thread a moment to process the new items and remain responsive
+                        await Task.Delay(1); 
+                        
+                        if (IsBusy == false) break; // Allow cancellation if we implement it later
+                    }
 
                     Status = $"Complete \u2014 {results.Count} leaf nodes found";
                 }
