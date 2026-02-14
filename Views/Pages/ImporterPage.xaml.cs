@@ -120,10 +120,21 @@ namespace PlmXmlSyntax.Views.Pages
             var dataView = CollectionViewSource.GetDefaultView(LeafNodesList.ItemsSource);
             if (dataView == null) return;
 
+            // Remember the selected item before sorting
+            var selectedItem = LeafNodesList.SelectedItem;
+
             dataView.SortDescriptions.Clear();
             SortDescription sd = new SortDescription(sortBy, direction);
             dataView.SortDescriptions.Add(sd);
-            dataView.Refresh();
+            
+            // Use Dispatcher to scroll to the selected item AFTER the UI has repositioned it
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (selectedItem != null)
+                {
+                    LeafNodesList.ScrollIntoView(selectedItem);
+                }
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
 
         private ScrollViewer? GetScrollViewer(DependencyObject? o)
