@@ -6,11 +6,12 @@
   xmlns:local="clr-namespace:PlmXmlSyntax.Views.Pages"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+  xmlns:models="clr-namespace:PlmXmlSyntax.Models"
   Title="ImporterPage"
   d:DataContext="{d:DesignInstance local:ImporterPage,
                                      IsDesignTimeCreatable=False}"
-  d:DesignHeight="450"
-  d:DesignWidth="800"
+  d:DesignHeight="600"
+  d:DesignWidth="900"
   ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
   ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -19,49 +20,82 @@
 >
   <Grid Margin="16">
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" /> <!-- Toolbar & Staging -->
+      <RowDefinition Height="Auto" /> <!-- Status -->
+      <RowDefinition Height="*" />    <!-- Main Results -->
     </Grid.RowDefinitions>
 
-    <!-- Header Area: Sticky -->
-    <StackPanel Grid.Row="0" Background="{DynamicResource ApplicationBackgroundBrush}">
-        <ui:Button
-          Command="{Binding ViewModel.ImportFileCommand, Mode=OneWay}"
-          Content="Import PLMXML"
-          Icon="ArrowImport24"
-          HorizontalAlignment="Left"
-          Margin="0,0,0,12"
-        />
+    <!-- Header / Staging Area -->
+    <GroupBox Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,12">
+        <StackPanel Margin="8">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <ui:Button
+                    Command="{Binding ViewModel.AddFilesCommand, Mode=OneWay}"
+                    Content="Add Files"
+                    Icon="Add24"
+                    Margin="0,0,8,0"
+                />
+                <ui:Button
+                    Appearance="Primary"
+                    Command="{Binding ViewModel.StartImportCommand, Mode=OneWay}"
+                    Content="Start Process"
+                    Icon="Play24"
+                    Margin="0,0,8,0"
+                />
+                <ui:Button
+                    Appearance="Secondary"
+                    Command="{Binding ViewModel.ClearFilesCommand, Mode=OneWay}"
+                    Content="Clear All"
+                    Icon="Delete24"
+                />
+            </StackPanel>
 
-        <TextBlock
-          Text="{Binding ViewModel.FilePath, Mode=OneWay}"
-          HorizontalAlignment="Left"
-          Margin="0,0,0,8"
-          TextTrimming="CharacterEllipsis"
-          Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-        />
-
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-            <TextBlock
-                Text="{Binding ViewModel.Status, Mode=OneWay}"
-                FontWeight="SemiBold"
-                VerticalAlignment="Center"
-            />
-            <ProgressBar
-                IsIndeterminate="True"
-                Visibility="{Binding ViewModel.IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Width="120"
-                Height="4"
-                Margin="12,0,0,0"
-                VerticalAlignment="Center"
-            />
+            <ItemsControl ItemsSource="{Binding ViewModel.StagedFiles}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:ImportedFileInfo}">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" ToolTip="{Binding FullPath}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Status}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="12,0" />
+                            <ui:Button 
+                                Grid.Column="2" 
+                                Icon="Dismiss24" 
+                                Padding="4"
+                                Appearance="Transparent" 
+                                Command="{Binding DataContext.ViewModel.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                CommandParameter="{Binding}"
+                            />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
-        <Separator Margin="0,4,0,12"/>
+    </GroupBox>
+
+    <!-- Status Bar -->
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+        <TextBlock
+            Text="{Binding ViewModel.Status, Mode=OneWay}"
+            FontWeight="SemiBold"
+            VerticalAlignment="Center"
+        />
+        <ProgressBar
+            IsIndeterminate="True"
+            Visibility="{Binding ViewModel.IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Width="120"
+            Height="4"
+            Margin="12,0,0,0"
+            VerticalAlignment="Center"
+        />
     </StackPanel>
 
-    <!-- List Area: Scrollable with WPF-UI styling -->
+    <!-- Main Results List -->
     <ui:ListView
-        Grid.Row="1"
+        Grid.Row="2"
         x:Name="LeafNodesList"
         ItemsSource="{Binding ViewModel.LeafNodes, Mode=OneWay}"
         PreviewMouseWheel="ListView_PreviewMouseWheel"
@@ -72,10 +106,10 @@
         ScrollViewer.VerticalScrollBarVisibility="Auto"
         ScrollViewer.HorizontalScrollBarVisibility="Auto"
         SelectionMode="Extended"
-        BorderThickness="0"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
     >
         <ui:ListView.Resources>
-            <!-- Style for GridView headers to make them darker and integrated -->
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
@@ -89,7 +123,7 @@
             <Style TargetType="ListViewItem">
                 <Setter Property="Margin" Value="2,1" />
                 <Setter Property="Padding" Value="4" />
-                <Setter Property="MinHeight" Value="32" />
+                <Setter Property="MinHeight" Value="28" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

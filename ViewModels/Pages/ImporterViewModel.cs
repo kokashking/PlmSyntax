@@ -10,12 +10,6 @@ namespace PlmXmlSyntax.ViewModels.Pages
     {
         private readonly IPlmXmlService _plmXmlService;
 
-        // TODO: Remove auto-import after debugging
-        private const string DebugAutoImportPath = @"C:\Projects\Pope\E4 upload docs\HDBT_PVS_PO546_BASIS_LL_BRD_1JT.plmxml";
-
-        [ObservableProperty]
-        private string _filePath = string.Empty;
-
         [ObservableProperty]
         private string _status = "Ready";
 
@@ -23,76 +17,108 @@ namespace PlmXmlSyntax.ViewModels.Pages
         private bool _isBusy = false;
 
         [ObservableProperty]
+        private ObservableCollection<ImportedFileInfo> _stagedFiles = new();
+
+        [ObservableProperty]
         private ObservableCollection<LeafNodeInfo> _leafNodes = new();
 
         public ImporterViewModel(IPlmXmlService plmXmlService)
         {
             _plmXmlService = plmXmlService;
-
-            if (File.Exists(DebugAutoImportPath))
-                _ = AutoImportAsync();
-        }
-
-        private async Task AutoImportAsync()
-        {
-            await Task.Delay(500);
-            FilePath = DebugAutoImportPath;
-            await RunImportAsync();
         }
 
         [RelayCommand]
-        private async Task OnImportFile()
+        private void OnAddFiles()
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "PLMXML files (*.plmxml)|*.plmxml|XML files (*.xml)|*.xml|All files (*.*)|*.*"
+                Filter = "PLMXML files (*.plmxml)|*.plmxml|XML files (*.xml)|*.xml|All files (*.*)|*.*",
+                Multiselect = true
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                FilePath = openFileDialog.FileName;
-                await RunImportAsync();
+                foreach (var path in openFileDialog.FileNames)
+                {
+                    if (StagedFiles.All(f => f.FullPath != path))
+                    {
+                        StagedFiles.Add(new ImportedFileInfo { FullPath = path });
+                    }
+                }
+                UpdateStatus();
             }
         }
 
-        private async Task RunImportAsync()
+        [RelayCommand]
+        private void OnRemoveFile(ImportedFileInfo? file)
         {
-            Status = "Parsing...";
+            if (file != null)
+            {
+                StagedFiles.Remove(file);
+                UpdateStatus();
+            }
+        }
+
+        [RelayCommand]
+        private void OnClearFiles()
+        {
+            StagedFiles.Clear();
+            LeafNodes.Clear();
+            UpdateStatus();
+        }
+
+        private void UpdateStatus()
+        {
+            if (IsBusy) return;
+            Status = StagedFiles.Count == 0 ? "Ready" : $"{StagedFiles.Count} files staged";
+        }
+
+        [RelayCommand]
+        private async Task OnStartImport()
+        {
+            if (StagedFiles.Count == 0) return;
+
             IsBusy = true;
             LeafNodes.Clear();
+            int totalNodes = 0;
 
             try
             {
-                var plmXml = await _plmXmlService.ParseAsync(FilePath);
-                if (plmXml != null)
+                foreach (var file in StagedFiles)
                 {
-                    Status = "Traversing tree...";
-                    var results = await _plmXmlService.TraverseTreeAsync(plmXml);
+                    file.IsProcessed = false;
+                    file.Status = "Parsing...";
+                    Status = $"Processing {file.FileName}...";
 
-                    Status = $"Populating UI \u2014 {results.Count} nodes...";
-                    
-                    // Chunked loading to keep UI responsive
-                    const int batchSize = 500;
-                    for (int i = 0; i < results.Count; i += batchSize)
+                    var plmXml = await _plmXmlService.ParseAsync(file.FullPath);
+                    if (plmXml != null)
                     {
-                        var batch = results.Skip(i).Take(batchSize);
-                        foreach (var item in batch)
+                        file.Status = "Traversing...";
+                        var results = await _plmXmlService.TraverseTreeAsync(plmXml);
+                        totalNodes += results.Count;
+
+                        file.Status = "Populating...";
+                        const int batchSize = 500;
+                        for (int i = 0; i < results.Count; i += batchSize)
                         {
-                            LeafNodes.Add(item);
+                            var batch = results.Skip(i).Take(batchSize);
+                            foreach (var item in batch)
+                            {
+                                LeafNodes.Add(item);
+                            }
+                            await Task.Delay(1);
                         }
                         
-                        // Give the UI thread a moment to process the new items and remain responsive
-                        await Task.Delay(1); 
-                        
-                        if (IsBusy == false) break; // Allow cancellation if we implement it later
+                        file.IsProcessed = true;
+                        file.Status = $"Done ({results.Count} nodes)";
                     }
+                    else
+                    {
+                        file.Status = "Error: Parse failed";
+                    }
+                }
 
-                    Status = $"Complete \u2014 {results.Count} leaf nodes found";
-                }
-                else
-                {
-                    Status = "Failed to parse file";
-                }
+                Status = $"Import Complete \u2014 {totalNodes} nodes total";
             }
             catch (Exception ex)
             {
