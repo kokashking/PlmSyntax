@@ -9,6 +9,7 @@ namespace PlmXmlSyntax.ViewModels.Pages
     public partial class ImporterViewModel : ObservableObject
     {
         private readonly IPlmXmlService _plmXmlService;
+        private readonly IPlmXmlAuditService _auditService;
 
         [ObservableProperty]
         private string _status = "Ready";
@@ -22,9 +23,10 @@ namespace PlmXmlSyntax.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<LeafNodeInfo> _leafNodes = new();
 
-        public ImporterViewModel(IPlmXmlService plmXmlService)
+        public ImporterViewModel(IPlmXmlService plmXmlService, IPlmXmlAuditService auditService)
         {
             _plmXmlService = plmXmlService;
+            _auditService = auditService;
         }
 
         [RelayCommand]
@@ -81,6 +83,7 @@ namespace PlmXmlSyntax.ViewModels.Pages
             IsBusy = true;
             LeafNodes.Clear();
             int totalNodes = 0;
+            var parsedDatasets = new List<(PlmXml Data, string Path)>();
 
             try
             {
@@ -93,6 +96,7 @@ namespace PlmXmlSyntax.ViewModels.Pages
                     var plmXml = await _plmXmlService.ParseAsync(file.FullPath);
                     if (plmXml != null)
                     {
+                        parsedDatasets.Add((plmXml, file.FullPath));
                         file.Status = "Traversing...";
                         var results = await _plmXmlService.TraverseTreeAsync(plmXml);
                         totalNodes += results.Count;
@@ -115,6 +119,22 @@ namespace PlmXmlSyntax.ViewModels.Pages
                     else
                     {
                         file.Status = "Error: Parse failed";
+                    }
+                }
+
+                // Run Cross-File Analysis
+                Status = "Analyzing Collisions...";
+                var collisions = await _auditService.AnalyzeCrossFileCollisionsAsync(parsedDatasets);
+                if (collisions.Any())
+                {
+                    var collisionIds = new HashSet<string>(collisions.Select(c => c.NodeId));
+                    foreach (var leaf in LeafNodes)
+                    {
+                        if (collisionIds.Contains(leaf.ProductRevisionViewId))
+                        {
+                            leaf.Severity = AuditSeverity.Warning;
+                            leaf.StatusMessage = $"ID '{leaf.ProductRevisionViewId}' exists in multiple files. Auto-merge will resolve this.";
+                        }
                     }
                 }
 

@@ -13,9 +13,16 @@ public class PlmXmlService : IPlmXmlService
     private static readonly string LogPath = Path.Combine(
         Path.GetDirectoryName(AppContext.BaseDirectory) ?? ".", "plmxml_diag.log");
 
+    private readonly IPlmXmlAuditService _auditService;
+
     public PlmXml? CurrentPlmXml { get; private set; }
     public List<LeafNodeInfo>? CurrentLeafNodes { get; private set; }
     public ParsingProfile? ActiveProfile { get; private set; }
+
+    public PlmXmlService(IPlmXmlAuditService auditService)
+    {
+        _auditService = auditService;
+    }
 
     private static void Log(string msg)
     {
@@ -34,7 +41,7 @@ public class PlmXmlService : IPlmXmlService
         {
             try
             {
-                var plmXml = new PlmXml();
+                var plmXml = new PlmXml { Name = filePath };
                 var settings = new XmlReaderSettings { IgnoreWhitespace = true };
                 ActiveProfile = ParsingProfile.Default;
 
@@ -45,6 +52,7 @@ public class PlmXmlService : IPlmXmlService
                 {
                     if (reader.NodeType != XmlNodeType.Element) continue;
                     string localName = reader.LocalName;
+                    string? id = reader.GetAttribute("id")?.Trim();
 
                     if (localName == "PLMXML") {
                         var author = reader.GetAttribute("author") ?? "";
@@ -52,23 +60,34 @@ public class PlmXmlService : IPlmXmlService
                         else if (author.Contains("Teamcenter", StringComparison.OrdinalIgnoreCase)) ActiveProfile = ParsingProfile.Teamcenter;
                         Log($"  Using Profile: {ActiveProfile.Name}");
                     } else if (localName == "InstanceGraph") {
-                        plmXml.ProductDef.InstanceGraph.RootInstanceRef = reader.GetAttribute("rootInstanceRef") ?? "";
+                        plmXml.ProductDef.InstanceGraph.RootInstanceRef = reader.GetAttribute("rootInstanceRef")?.Trim() ?? "";
                     } else if (localName == "ProductInstance") {
-                        var instance = new ProductInstance { Id = reader.GetAttribute("id") ?? "", Name = reader.GetAttribute("name") ?? "", PartRef = reader.GetAttribute("partRef") ?? "", SequenceNumber = reader.GetAttribute("sequenceNumber") ?? "" };
+                        var instance = new ProductInstance { 
+                            Id = id ?? "", 
+                            Name = reader.GetAttribute("name") ?? "", 
+                            PartRef = reader.GetAttribute("partRef")?.Trim() ?? "", 
+                            SequenceNumber = reader.GetAttribute("sequenceNumber") ?? "" 
+                        };
                         if (!reader.IsEmptyElement) {
                             using var subReader = reader.ReadSubtree();
                             while (subReader.Read()) if (subReader.NodeType == XmlNodeType.Element && subReader.LocalName == "Transform")
-                                instance.Transform = new Transform { Id = subReader.GetAttribute("id") ?? "", Value = subReader.ReadElementContentAsString() };
+                                instance.Transform = new Transform { Id = subReader.GetAttribute("id")?.Trim() ?? "", Value = subReader.ReadElementContentAsString() };
                         }
                         plmXml.ProductDef.InstanceGraph.ProductInstances.Add(instance);
                     } else if (localName == "ProductRevisionView") {
-                        var view = new ProductRevisionView { Id = reader.GetAttribute("id") ?? "", Name = reader.GetAttribute("name") ?? "", Type = reader.GetAttribute("type") ?? "", InstanceRefs = reader.GetAttribute("instanceRefs") ?? "", RevisionRef = reader.GetAttribute("revisionRef") ?? "" };
+                        var view = new ProductRevisionView { 
+                            Id = id ?? "", 
+                            Name = reader.GetAttribute("name") ?? "", 
+                            Type = reader.GetAttribute("type") ?? "", 
+                            InstanceRefs = reader.GetAttribute("instanceRefs")?.Trim() ?? "", 
+                            RevisionRef = reader.GetAttribute("revisionRef")?.Trim() ?? "" 
+                        };
                         if (!reader.IsEmptyElement) {
                             using var subReader = reader.ReadSubtree();
                             var userValues = new List<UserValue>();
                             while (subReader.Read()) {
                                 if (subReader.NodeType == XmlNodeType.Element) {
-                                    if (subReader.LocalName == "Representation") view.Representation = new Representation { Id = subReader.GetAttribute("id") ?? "", Format = subReader.GetAttribute("format") ?? "", Location = subReader.GetAttribute("location") ?? "" };
+                                    if (subReader.LocalName == "Representation") view.Representation = new Representation { Id = subReader.GetAttribute("id")?.Trim() ?? "", Format = subReader.GetAttribute("format") ?? "", Location = subReader.GetAttribute("location") ?? "" };
                                     else if (subReader.LocalName == "UserValue") userValues.Add(new UserValue { Title = subReader.GetAttribute("title") ?? "", Value = subReader.GetAttribute("value") ?? "" });
                                 }
                             }
@@ -76,9 +95,9 @@ public class PlmXmlService : IPlmXmlService
                         }
                         plmXml.ProductDef.InstanceGraph.ProductRevisionViews.Add(view);
                     } else if (localName == "ProductRevision") {
-                        plmXml.ProductRevisions.Add(new ProductRevision { Id = reader.GetAttribute("id") ?? "", Name = reader.GetAttribute("name") ?? "", InstanceRefs = reader.GetAttribute("instanceRefs") ?? "" });
+                        plmXml.ProductRevisions.Add(new ProductRevision { Id = id ?? "", Name = reader.GetAttribute("name") ?? "", InstanceRefs = reader.GetAttribute("instanceRefs")?.Trim() ?? "" });
                     } else if (localName == "Product") {
-                        plmXml.Products.Add(new Product { Id = reader.GetAttribute("id") ?? "", Name = reader.GetAttribute("name") ?? "" });
+                        plmXml.Products.Add(new Product { Id = id ?? "", Name = reader.GetAttribute("name") ?? "" });
                     }
                 }
                 CurrentPlmXml = plmXml;
@@ -92,6 +111,9 @@ public class PlmXmlService : IPlmXmlService
     {
         var profile = ActiveProfile ?? ParsingProfile.Default;
         Log($"TraverseTreeAsync START (Profile: {profile.Name})");
+
+        var issues = await _auditService.AuditAsync(plmXml, plmXml.Name);
+        var issueMap = issues.GroupBy(i => i.NodeId).ToDictionary(g => g.Key, g => g.First());
 
         return await Task.Run(() =>
         {
@@ -122,11 +144,40 @@ public class PlmXmlService : IPlmXmlService
                     var (curr, pMat, pPNs) = stack.Pop();
                     string targetId = curr.PartRef.TrimStart('#');
                     ProductRevisionView? view = ResolveView(targetId, viewL, revL, prodL, profile);
-                    if (view == null) continue;
+                    
+                    if (view == null) {
+                        leafNodes.Add(new LeafNodeInfo { 
+                            Name = curr.Name, 
+                            FileName = "--- MISSING ---", 
+                            ProductRevisionViewId = targetId,
+                            Severity = AuditSeverity.Error,
+                            StatusMessage = $"Reference '{targetId}' could not be resolved.",
+                            SourcePlmXmlPath = plmXml.Name
+                        });
+                        continue;
+                    }
                     
                     Matrix4x4 world = (curr.Transform?.Value.ParseTransform() ?? Matrix4x4.Identity) * pMat;
                     if (view.Representation != null) {
-                        leafNodes.Add(new LeafNodeInfo { Name = view.Name, FileName = view.Representation.Location, Format = view.Representation.Format, ProductRevisionViewId = view.Id, Transform = world.ToExplicitDecimalString(), PartNumbers = string.Join(", ", pPNs) });
+                        var leaf = new LeafNodeInfo { 
+                            Name = view.Name, 
+                            FileName = view.Representation.Location, 
+                            Format = view.Representation.Format, 
+                            ProductRevisionViewId = view.Id, 
+                            Transform = world.ToExplicitDecimalString(), 
+                            PartNumbers = string.Join(", ", pPNs),
+                            SourcePlmXmlPath = plmXml.Name
+                        };
+
+                        if (issueMap.TryGetValue(curr.Id, out var issue)) {
+                            leaf.Severity = issue.Severity;
+                            leaf.StatusMessage = issue.Message;
+                        } else if (issueMap.TryGetValue(view.Id, out var viewIssue)) {
+                            leaf.Severity = viewIssue.Severity;
+                            leaf.StatusMessage = viewIssue.Message;
+                        }
+
+                        leafNodes.Add(leaf);
                         continue;
                     }
                     if (string.IsNullOrEmpty(view.InstanceRefs) || !visited.Add(curr.Id)) continue;
@@ -144,13 +195,12 @@ public class PlmXmlService : IPlmXmlService
             if (leafNodes.Count == 0 && (profile.RootStrategy == RootSearchStrategy.Flat || profile.RootStrategy == RootSearchStrategy.Auto)) {
                 Log("  Falling back to FLAT collection...");
                 foreach (var view in plmXml.ProductDef.InstanceGraph.ProductRevisionViews.Where(v => v.Representation != null)) {
-                    leafNodes.Add(new LeafNodeInfo { Name = view.Name, FileName = view.Representation.Location, Format = view.Representation.Format, ProductRevisionViewId = view.Id, Transform = Matrix4x4.Identity.ToExplicitDecimalString(), PartNumbers = "FLAT_FALLBACK" });
+                    leafNodes.Add(new LeafNodeInfo { Name = view.Name, FileName = view.Representation.Location, Format = view.Representation.Format, ProductRevisionViewId = view.Id, Transform = Matrix4x4.Identity.ToExplicitDecimalString(), PartNumbers = "FLAT_FALLBACK", SourcePlmXmlPath = plmXml.Name });
                 }
             }
 
             Log($"TraverseTreeAsync DONE. Leaves: {leafNodes.Count}");
             CurrentLeafNodes = leafNodes;
-            CurrentPlmXml = null;
             return leafNodes;
         });
     }

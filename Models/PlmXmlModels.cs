@@ -5,6 +5,9 @@ namespace PlmXmlSyntax.Models;
 [XmlRoot("PLMXML", Namespace = "http://www.plmxml.org/Schemas/PLMXMLSchema", IsNullable = false)]
 public class PlmXml
 {
+    [XmlIgnore]
+    public string Name { get; set; } = string.Empty;
+
     [XmlElement("Instance")]
     public List<Instance> Instances { get; set; } = new();
 

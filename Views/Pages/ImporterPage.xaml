@@ -18,6 +18,10 @@
   ScrollViewer.VerticalScrollBarVisibility="Disabled"
   mc:Ignorable="d"
 >
+  <Page.Resources>
+    <local:PathToFileNameConverter x:Key="PathToFileNameConverter"/>
+  </Page.Resources>
+
   <Grid Margin="16">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" /> <!-- Toolbar & Staging -->
@@ -99,6 +103,7 @@
         x:Name="LeafNodesList"
         ItemsSource="{Binding ViewModel.LeafNodes, Mode=OneWay}"
         PreviewMouseWheel="ListView_PreviewMouseWheel"
+        ButtonBase.Click="OnColumnHeaderClick"
         VirtualizingPanel.IsVirtualizing="True"
         VirtualizingPanel.VirtualizationMode="Recycling"
         VirtualizingPanel.ScrollUnit="Item"
@@ -154,6 +159,30 @@
         </ui:ListView.ItemContainerStyle>
         <ui:ListView.View>
             <GridView>
+                <GridViewColumn Header="Status" Width="60">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <ui:SymbolIcon x:Name="StatusIcon" Symbol="CheckmarkCircle24" Foreground="Green" VerticalAlignment="Center" ToolTip="{Binding StatusMessage}" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                                    <Setter TargetName="StatusIcon" Property="Symbol" Value="Warning24" />
+                                    <Setter TargetName="StatusIcon" Property="Foreground" Value="Orange" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Severity}" Value="Error">
+                                    <Setter TargetName="StatusIcon" Property="Symbol" Value="ErrorCircle24" />
+                                    <Setter TargetName="StatusIcon" Property="Foreground" Value="Red" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="Source" Width="150">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SourcePlmXmlPath, Converter={StaticResource PathToFileNameConverter}}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" ToolTip="{Binding SourcePlmXmlPath}" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
                 <GridViewColumn Header="Name" Width="150">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>

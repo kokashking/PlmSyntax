@@ -8,4 +8,9 @@ public class LeafNodeInfo
     public string ProductRevisionViewId { get; init; } = string.Empty;
     public string Transform { get; init; } = string.Empty;
     public string PartNumbers { get; init; } = string.Empty;
+    public string SourcePlmXmlPath { get; init; } = string.Empty;
+    
+    // Audit Data
+    public AuditSeverity Severity { get; set; } = AuditSeverity.Info;
+    public string StatusMessage { get; set; } = "OK";
 }
