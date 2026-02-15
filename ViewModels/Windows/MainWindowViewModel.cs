@@ -6,7 +6,7 @@ namespace PlmXmlSyntax.ViewModels.Windows
     public partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _applicationTitle = "WPF UI - PlmXmlSyntax";
+        private string _applicationTitle = "PlmSyntax";
 
         [ObservableProperty]
         private ObservableCollection<object> _menuItems = new()
