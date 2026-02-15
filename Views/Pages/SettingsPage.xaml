@@ -1,4 +1,4 @@
-﻿<Page
+<Page
   x:Class="PlmXmlSyntax.Views.Pages.SettingsPage"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,7 +10,7 @@
   Title="SettingsPage"
   d:DataContext="{d:DesignInstance local:SettingsPage,
                                      IsDesignTimeCreatable=False}"
-  d:DesignHeight="450"
+  d:DesignHeight="650"
   d:DesignWidth="800"
   ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
   ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -20,26 +20,85 @@
   <Page.Resources>
     <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
   </Page.Resources>
-  <StackPanel>
-    <TextBlock FontSize="20" FontWeight="Medium" Text="Personalization" />
-    <TextBlock Margin="0,12,0,0" Text="Theme" />
-    <RadioButton
-      Margin="0,12,0,0"
-      Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-      CommandParameter="theme_light"
-      Content="Light"
-      GroupName="themeSelect"
-      IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
-    />
-    <RadioButton
-      Margin="0,8,0,0"
-      Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
-      CommandParameter="theme_dark"
-      Content="Dark"
-      GroupName="themeSelect"
-      IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
-    />
-    <TextBlock Margin="0,24,0,0" FontSize="20" FontWeight="Medium" Text="About PlmXmlSyntax" />
-    <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
-  </StackPanel>
+
+  <ScrollViewer>
+    <StackPanel Margin="24">
+        <TextBlock FontSize="24" FontWeight="Bold" Text="Configuration &amp; Profiles" Margin="0,0,0,24" />
+
+        <!-- Profile Selection -->
+        <ui:CardControl Header="Active Parsing Profile" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox ItemsSource="{Binding ViewModel.Profiles}" 
+                          SelectedItem="{Binding ViewModel.SelectedProfile}"
+                          DisplayMemberPath="Name"
+                          Width="250" Margin="0,0,12,0"/>
+                <ui:Button Content="Save Changes" 
+                           Command="{Binding ViewModel.SaveProfileCommand}"
+                           Appearance="Primary" />
+            </StackPanel>
+        </ui:CardControl>
+
+        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Merge Engine Options" Margin="0,12,0,12" />
+        <ui:Card Margin="0,0,0,16">
+            <StackPanel Margin="16">
+                <TextBlock Text="Merge Strategy" Margin="0,0,0,8" FontWeight="Medium" />
+                <ComboBox ItemsSource="{Binding ViewModel.MergeStrategies}"
+                          SelectedItem="{Binding ViewModel.SelectedProfile.ActiveMergeStrategy}"
+                          HorizontalAlignment="Left" Width="250" Margin="0,0,0,16" />
+
+                <TextBlock Text="File Prefix Pattern" Margin="0,0,0,8" FontWeight="Medium" />
+                <ui:TextBox Text="{Binding ViewModel.SelectedProfile.MergePrefixPattern}" 
+                            PlaceholderText="F{0}_" Width="250" HorizontalAlignment="Left" Margin="0,0,0,8" />
+                <TextBlock Text="Use {0} for file index (e.g. F1_id1)" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+        </ui:Card>
+
+        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Parser Intelligence" Margin="0,12,0,12" />
+        <ui:Card Margin="0,0,0,16">
+            <StackPanel Margin="16">
+                <TextBlock Text="Root Search Heuristic" Margin="0,0,0,8" FontWeight="Medium" />
+                <ComboBox ItemsSource="{Binding ViewModel.RootSearchStrategies}"
+                          SelectedItem="{Binding ViewModel.SelectedProfile.RootStrategy}"
+                          HorizontalAlignment="Left" Width="250" Margin="0,0,0,16" />
+
+                <TextBlock Text="Part Number Source (UserData Title)" Margin="0,0,0,8" FontWeight="Medium" />
+                <ui:TextBox Text="{Binding ViewModel.SelectedProfile.PartNumberUserDataTitle}" 
+                            PlaceholderText="Mehrnummern" Width="250" HorizontalAlignment="Left" />
+            </StackPanel>
+        </ui:Card>
+
+        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Guard &amp; IP Protection" Margin="0,12,0,12" />
+        <ui:Card Margin="0,0,0,24">
+            <StackPanel Margin="16">
+                <CheckBox Content="Scrub Usernames from Metadata" 
+                          IsChecked="{Binding ViewModel.SelectedProfile.ScrubUserNames}" Margin="0,0,0,12" />
+                <CheckBox Content="Hide Cost Attributes" 
+                          IsChecked="{Binding ViewModel.SelectedProfile.ScrubCosts}" />
+            </StackPanel>
+        </ui:Card>
+
+        <Separator Margin="0,0,0,24" />
+
+        <TextBlock FontSize="20" FontWeight="Medium" Text="Personalization" />
+        <TextBlock Margin="0,12,0,8" Text="Theme" />
+        <RadioButton
+          Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+          CommandParameter="theme_light"
+          Content="Light"
+          GroupName="themeSelect"
+          IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
+        />
+        <RadioButton
+          Margin="0,8,0,0"
+          Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
+          CommandParameter="theme_dark"
+          Content="Dark"
+          GroupName="themeSelect"
+          IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
+        />
+
+        <TextBlock Margin="0,24,0,8" FontSize="20" FontWeight="Medium" Text="About PlmXmlSyntax" />
+        <TextBlock Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+    </StackPanel>
+  </ScrollViewer>
 </Page>

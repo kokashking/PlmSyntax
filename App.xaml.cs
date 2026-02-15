@@ -46,6 +46,7 @@ namespace PlmXmlSyntax
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
 
+                services.AddSingleton<IProfileService, ProfileService>();
                 services.AddSingleton<IPlmXmlService, PlmXmlService>();
                 services.AddSingleton<IPlmXmlMergeService, PlmXmlMergeService>();
                 services.AddSingleton<IPlmXmlAuditService, PlmXmlAuditService>();

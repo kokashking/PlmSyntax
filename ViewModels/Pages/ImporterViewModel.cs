@@ -127,13 +127,13 @@ namespace PlmXmlSyntax.ViewModels.Pages
                 var collisions = await _auditService.AnalyzeCrossFileCollisionsAsync(parsedDatasets);
                 if (collisions.Any())
                 {
-                    var collisionIds = new HashSet<string>(collisions.Select(c => c.NodeId));
+                    var collisionMap = collisions.GroupBy(c => c.NodeId).ToDictionary(g => g.Key, g => g.First());
                     foreach (var leaf in LeafNodes)
                     {
-                        if (collisionIds.Contains(leaf.ProductRevisionViewId))
+                        if (collisionMap.TryGetValue(leaf.ProductRevisionViewId, out var issue))
                         {
                             leaf.Severity = AuditSeverity.Warning;
-                            leaf.StatusMessage = $"ID '{leaf.ProductRevisionViewId}' exists in multiple files. Auto-merge will resolve this.";
+                            leaf.StatusMessage = issue.Message + " Auto-merge will resolve this.";
                         }
                     }
                 }

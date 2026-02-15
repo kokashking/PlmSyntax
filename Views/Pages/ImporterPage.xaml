@@ -29,8 +29,8 @@
       <RowDefinition Height="*" />    <!-- Main Results -->
     </Grid.RowDefinitions>
 
-    <!-- Header / Staging Area -->
-    <GroupBox Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,12">
+    <!-- Header / Staging Area (Minimizable) -->
+    <Expander Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,12" IsExpanded="True">
         <StackPanel Margin="8">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                 <ui:Button
@@ -54,8 +54,8 @@
                 />
             </StackPanel>
 
-            <ItemsControl ItemsSource="{Binding ViewModel.StagedFiles}">
-                <ItemsControl.ItemTemplate>
+            <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" BorderThickness="0" Background="Transparent" MaxHeight="200">
+                <ui:ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:ImportedFileInfo}">
                         <Grid Margin="0,2">
                             <Grid.ColumnDefinitions>
@@ -67,18 +67,21 @@
                             <TextBlock Grid.Column="1" Text="{Binding Status}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="12,0" />
                             <ui:Button 
                                 Grid.Column="2" 
-                                Icon="Dismiss24" 
-                                Padding="4"
+                                Padding="2"
+                                MinHeight="24"
+                                MinWidth="24"
                                 Appearance="Transparent" 
                                 Command="{Binding DataContext.ViewModel.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                 CommandParameter="{Binding}"
-                            />
+                            >
+                                <ui:SymbolIcon Symbol="Dismiss16" Foreground="Red" />
+                            </ui:Button>
                         </Grid>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </ui:ListView.ItemTemplate>
+            </ui:ListView>
         </StackPanel>
-    </GroupBox>
+    </Expander>
 
     <!-- Status Bar -->
     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">

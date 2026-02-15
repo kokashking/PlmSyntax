@@ -8,31 +8,33 @@ public enum RootSearchStrategy
     Auto       // Try Attribute, fallback to Heuristic, fallback to Flat
 }
 
+public enum MergeStrategy
+{
+    PrefixAll,      // id1 -> F1_id1 (Maximum isolation)
+    UnifyByName,    // Parts with same Name share one ID
+    UnifyByPartNo,  // Parts with same UserValue:PartNo share one ID
+    FlattenHierarchy // All leaves under one root, no sub-assemblies
+}
+
 public class ParsingProfile
 {
-    public string Name { get; set; } = "Universal";
+    public string Name { get; set; } = "Default";
     
     // Detection
     public string AuthorPattern { get; set; } = ".*"; 
     
-    // Logic Configuration
+    // Parser Logic
     public string PartNumberUserDataTitle { get; set; } = "Mehrnummern";
     public RootSearchStrategy RootStrategy { get; set; } = RootSearchStrategy.Auto;
     public bool ResolveIndirectLinks { get; set; } = true; 
     
-    public static ParsingProfile Default => new();
+    // Merge Logic
+    public MergeStrategy ActiveMergeStrategy { get; set; } = MergeStrategy.PrefixAll;
+    public string MergePrefixPattern { get; set; } = "F{0}_"; // {0} is file index
     
-    public static ParsingProfile Teamcenter => new()
-    {
-        Name = "Siemens Teamcenter",
-        AuthorPattern = "Teamcenter",
-        PartNumberUserDataTitle = "Mehrnummern"
-    };
+    // Guard Logic (IP Protection)
+    public bool ScrubUserNames { get; set; } = false;
+    public bool ScrubCosts { get; set; } = false;
 
-    public static ParsingProfile exentra => new()
-    {
-        Name = "exentra DPTW",
-        AuthorPattern = "exentra",
-        RootStrategy = RootSearchStrategy.Auto
-    };
+    public static ParsingProfile Default => new();
 }
