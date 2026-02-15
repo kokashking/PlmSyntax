@@ -15,22 +15,22 @@ namespace PlmXmlSyntax.ViewModels.Windows
             new NavigationViewItem()
             {
                 Content = "Importer",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowImport24, FontSize = 16 },
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowImport20, FontSize = 14 },
                 TargetPageType = typeof(Views.Pages.ImporterPage),
-                MinHeight = 32,
-                Padding = new Thickness(8, 4, 8, 4),
-                Margin = new Thickness(0, 1, 0, 1),
-                FontSize = 13
+                MinHeight = 28,
+                Padding = new Thickness(4, 2, 4, 2),
+                Margin = new Thickness(0, 0, 0, 0),
+                FontSize = 12
             },
             new NavigationViewItem()
             {
                 Content = "Explorer",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.TreeDeciduous20, FontSize = 16 },
+                Icon = new SymbolIcon { Symbol = SymbolRegular.TreeDeciduous20, FontSize = 14 },
                 TargetPageType = typeof(Views.Pages.DataPage),
-                MinHeight = 32,
-                Padding = new Thickness(8, 4, 8, 4),
-                Margin = new Thickness(0, 1, 0, 1),
-                FontSize = 13
+                MinHeight = 28,
+                Padding = new Thickness(4, 2, 4, 2),
+                Margin = new Thickness(0, 0, 0, 0),
+                FontSize = 12
             }
         };
 
@@ -40,12 +40,12 @@ namespace PlmXmlSyntax.ViewModels.Windows
             new NavigationViewItem()
             {
                 Content = "Settings",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24, FontSize = 16 },
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings20, FontSize = 14 },
                 TargetPageType = typeof(Views.Pages.SettingsPage),
-                MinHeight = 32,
-                Padding = new Thickness(8, 4, 8, 4),
-                Margin = new Thickness(0, 1, 0, 1),
-                FontSize = 13
+                MinHeight = 28,
+                Padding = new Thickness(4, 2, 4, 2),
+                Margin = new Thickness(0, 0, 0, 0),
+                FontSize = 12
             }
         };
 

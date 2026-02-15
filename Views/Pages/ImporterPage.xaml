@@ -30,17 +30,17 @@
     </Grid.RowDefinitions>
 
     <!-- Header / Staging Area (Minimizable) -->
-    <Expander Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,6" IsExpanded="True">
-        <StackPanel Margin="4">
+    <Expander Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,6" IsExpanded="True" Padding="4" Grid.IsSharedSizeScope="True">
+        <StackPanel Margin="2">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                 <ui:Button
                     Command="{Binding ViewModel.AddFilesCommand, Mode=OneWay}"
                     Content="Add Files"
-                    Padding="8,4"
+                    Padding="8,2"
                     Margin="0,0,4,0"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Add24" FontSize="14" />
+                        <ui:SymbolIcon Symbol="Add20" />
                     </ui:Button.Icon>
                 </ui:Button>
 
@@ -48,11 +48,11 @@
                     Appearance="Primary"
                     Command="{Binding ViewModel.StartImportCommand, Mode=OneWay}"
                     Content="Start Process"
-                    Padding="8,4"
+                    Padding="8,2"
                     Margin="0,0,4,0"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Play24" FontSize="14" />
+                        <ui:SymbolIcon Symbol="Play20" />
                     </ui:Button.Icon>
                 </ui:Button>
 
@@ -60,11 +60,11 @@
                     Appearance="Primary"
                     Command="{Binding ViewModel.MergeFilesCommand, Mode=OneWay}"
                     Content="Merge Files"
-                    Padding="8,4"
+                    Padding="8,2"
                     Margin="0,0,4,0"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="ArrowRouting24" FontSize="14" />
+                        <ui:SymbolIcon Symbol="ArrowRouting20" />
                     </ui:Button.Icon>
                 </ui:Button>
 
@@ -72,39 +72,47 @@
                     Appearance="Secondary"
                     Command="{Binding ViewModel.ClearFilesCommand, Mode=OneWay}"
                     Content="Clear All"
-                    Padding="8,4"
+                    Padding="8,2"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Delete24" FontSize="14" />
+                        <ui:SymbolIcon Symbol="Delete20" />
                     </ui:Button.Icon>
                 </ui:Button>
             </StackPanel>
 
-            <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" BorderThickness="0" Background="Transparent" MaxHeight="200">
+            <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" BorderThickness="0" Background="Transparent" MaxHeight="120" Padding="0,0,16,0">
                 <ui:ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:ImportedFileInfo}">
-                        <Grid Margin="0,2">
+                        <Grid HorizontalAlignment="Stretch" Margin="0,0,4,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="StatusCol" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ActionCol" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" ToolTip="{Binding FullPath}" />
-                            <TextBlock Grid.Column="1" Text="{Binding Status}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="12,0" />
+                            <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" FontSize="12" ToolTip="{Binding FullPath}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Status}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="12,0" />
                             <ui:Button 
                                 Grid.Column="2" 
-                                Padding="2"
-                                MinHeight="24"
-                                MinWidth="24"
+                                Padding="1"
+                                MinHeight="18"
+                                MinWidth="18"
                                 Appearance="Transparent" 
                                 Command="{Binding DataContext.ViewModel.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                 CommandParameter="{Binding}"
                             >
-                                <ui:SymbolIcon Symbol="Dismiss16" Foreground="Red" />
+                                <ui:SymbolIcon Symbol="Dismiss12" Foreground="Red" />
                             </ui:Button>
                         </Grid>
                     </DataTemplate>
                 </ui:ListView.ItemTemplate>
+                <ui:ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MinHeight" Value="20" />
+                        <Setter Property="Padding" Value="4,0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ui:ListView.ItemContainerStyle>
             </ui:ListView>
         </StackPanel>
     </Expander>
@@ -114,14 +122,15 @@
         <TextBlock
             Text="{Binding ViewModel.Status, Mode=OneWay}"
             FontWeight="SemiBold"
+            FontSize="12"
             VerticalAlignment="Center"
         />
         <ProgressBar
-            IsIndeterminate="True"
+            IsIndeterminate="{Binding ViewModel.IsBusy}"
             Visibility="{Binding ViewModel.IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Width="120"
-            Height="4"
-            Margin="12,0,0,0"
+            Width="100"
+            Height="3"
+            Margin="8,0,0,0"
             VerticalAlignment="Center"
         />
     </StackPanel>
@@ -147,7 +156,8 @@
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-                <Setter Property="Padding" Value="6,2" />
+                <Setter Property="Padding" Value="4,2" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="BorderThickness" Value="0,0,0,1" />
                 <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -155,9 +165,9 @@
         </ui:ListView.Resources>
         <ui:ListView.ItemContainerStyle>
             <Style TargetType="ListViewItem">
-                <Setter Property="Margin" Value="1,0" />
-                <Setter Property="Padding" Value="2" />
-                <Setter Property="MinHeight" Value="22" />
+                <Setter Property="Margin" Value="0,0" />
+                <Setter Property="Padding" Value="4,1" />
+                <Setter Property="MinHeight" Value="24" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -168,7 +178,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="Transparent"
                                     BorderThickness="1"
-                                    CornerRadius="4"
+                                    CornerRadius="2"
                                     SnapsToDevicePixels="True">
                                 <GridViewRowPresenter VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
                             </Border>
@@ -188,62 +198,62 @@
         </ui:ListView.ItemContainerStyle>
         <ui:ListView.View>
             <GridView>
-                <GridViewColumn Header="Status" Width="60">
+                <GridViewColumn Header="Status" Width="40">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <ui:SymbolIcon x:Name="StatusIcon" Symbol="CheckmarkCircle24" Foreground="Green" VerticalAlignment="Center" ToolTip="{Binding StatusMessage}" />
+                            <ui:SymbolIcon x:Name="StatusIcon" Symbol="CheckmarkCircle20" Foreground="Green" VerticalAlignment="Center" ToolTip="{Binding StatusMessage}" />
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding Severity}" Value="Warning">
-                                    <Setter TargetName="StatusIcon" Property="Symbol" Value="Warning24" />
+                                    <Setter TargetName="StatusIcon" Property="Symbol" Value="Warning20" />
                                     <Setter TargetName="StatusIcon" Property="Foreground" Value="Orange" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Severity}" Value="Error">
-                                    <Setter TargetName="StatusIcon" Property="Symbol" Value="ErrorCircle24" />
+                                    <Setter TargetName="StatusIcon" Property="Symbol" Value="ErrorCircle20" />
                                     <Setter TargetName="StatusIcon" Property="Foreground" Value="Red" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="Source" Width="150">
+                <GridViewColumn Header="Source" Width="120">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding SourcePlmXmlPath, Converter={StaticResource PathToFileNameConverter}}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" ToolTip="{Binding SourcePlmXmlPath}" />
+                            <TextBlock Text="{Binding SourcePlmXmlPath, Converter={StaticResource PathToFileNameConverter}}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" ToolTip="{Binding SourcePlmXmlPath}" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
                 <GridViewColumn Header="Name" Width="150">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" Foreground="{DynamicResource TextFillColorPrimaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{DynamicResource TextFillColorPrimaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="File" Width="250">
+                <GridViewColumn Header="File" Width="200">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding FileName}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding FileName}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="Format" Width="60">
+                <GridViewColumn Header="Format" Width="50">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Format}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Format}" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="ID" Width="80">
+                <GridViewColumn Header="ID" Width="70">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ProductRevisionViewId}" Foreground="{DynamicResource TextFillColorTertiaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ProductRevisionViewId}" FontSize="11" Foreground="{DynamicResource TextFillColorTertiaryBrush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
-                <GridViewColumn Header="Part Numbers" Width="200">
+                <GridViewColumn Header="Part Numbers" Width="150">
                     <GridViewColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding PartNumbers}" Foreground="{DynamicResource SystemAccentColorLight2Brush}" IsHitTestVisible="False" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding PartNumbers}" FontSize="11" Foreground="{DynamicResource SystemAccentColorLight2Brush}" IsHitTestVisible="False" VerticalAlignment="Center" />
                         </DataTemplate>
                     </GridViewColumn.CellTemplate>
                 </GridViewColumn>
