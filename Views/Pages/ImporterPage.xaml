@@ -36,22 +36,44 @@
                 <ui:Button
                     Command="{Binding ViewModel.AddFilesCommand, Mode=OneWay}"
                     Content="Add Files"
-                    Icon="Add24"
                     Margin="0,0,8,0"
-                />
+                >
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="Add24" />
+                    </ui:Button.Icon>
+                </ui:Button>
+                
                 <ui:Button
                     Appearance="Primary"
                     Command="{Binding ViewModel.StartImportCommand, Mode=OneWay}"
                     Content="Start Process"
-                    Icon="Play24"
                     Margin="0,0,8,0"
-                />
+                >
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="Play24" />
+                    </ui:Button.Icon>
+                </ui:Button>
+
+                <ui:Button
+                    Appearance="Primary"
+                    Command="{Binding ViewModel.MergeFilesCommand, Mode=OneWay}"
+                    Content="Merge Files"
+                    Margin="0,0,8,0"
+                >
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="ArrowRouting24" />
+                    </ui:Button.Icon>
+                </ui:Button>
+
                 <ui:Button
                     Appearance="Secondary"
                     Command="{Binding ViewModel.ClearFilesCommand, Mode=OneWay}"
                     Content="Clear All"
-                    Icon="Delete24"
-                />
+                >
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="Delete24" />
+                    </ui:Button.Icon>
+                </ui:Button>
             </StackPanel>
 
             <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" BorderThickness="0" Background="Transparent" MaxHeight="200">

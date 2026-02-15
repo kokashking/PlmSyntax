@@ -23,11 +23,49 @@ namespace PlmXmlSyntax.ViewModels.Pages
         [ObservableProperty]
         private ObservableCollection<LeafNodeInfo> _leafNodes = new();
 
-        public ImporterViewModel(IPlmXmlService plmXmlService, IPlmXmlAuditService auditService)
+        [RelayCommand]
+        private async Task OnMergeFiles()
+        {
+            if (StagedFiles.Count == 0) return;
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PLMXML files (*.plmxml)|*.plmxml",
+                FileName = "Merged_Assembly.plmxml"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                IsBusy = true;
+                Status = "Merging files...";
+                
+                try
+                {
+                    var sourcePaths = StagedFiles.Select(f => f.FullPath);
+                    var success = await _mergeService.MergeFilesAsync(sourcePaths, saveFileDialog.FileName, "MASTER_ASSEMBLY");
+                    
+                    if (success) Status = "Merge Successful!";
+                    else Status = "Merge Failed - check logs";
+                }
+                catch (Exception ex)
+                {
+                    Status = $"Merge Error: {ex.Message}";
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+            }
+        }
+
+        public ImporterViewModel(IPlmXmlService plmXmlService, IPlmXmlAuditService auditService, IPlmXmlMergeService mergeService)
         {
             _plmXmlService = plmXmlService;
             _auditService = auditService;
+            _mergeService = mergeService;
         }
+
+        private readonly IPlmXmlMergeService _mergeService;
 
         [RelayCommand]
         private void OnAddFiles()
