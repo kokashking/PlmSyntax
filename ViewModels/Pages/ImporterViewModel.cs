@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 using PlmXmlSyntax.Models;
 using PlmXmlSyntax.Services;
@@ -10,6 +12,7 @@ namespace PlmXmlSyntax.ViewModels.Pages
     {
         private readonly IPlmXmlService _plmXmlService;
         private readonly IPlmXmlAuditService _auditService;
+        private readonly IPlmXmlMergeService _mergeService;
 
         [ObservableProperty]
         private string _status = "Ready";
@@ -21,42 +24,10 @@ namespace PlmXmlSyntax.ViewModels.Pages
         private ObservableCollection<ImportedFileInfo> _stagedFiles = new();
 
         [ObservableProperty]
+        private ImportedFileInfo? _selectedStagedFile;
+
+        [ObservableProperty]
         private ObservableCollection<LeafNodeInfo> _leafNodes = new();
-
-        [RelayCommand]
-        private async Task OnMergeFiles()
-        {
-            if (StagedFiles.Count == 0) return;
-
-            var saveFileDialog = new SaveFileDialog
-            {
-                Filter = "PLMXML files (*.plmxml)|*.plmxml",
-                FileName = "Merged_Assembly.plmxml"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                IsBusy = true;
-                Status = "Merging files...";
-                
-                try
-                {
-                    var sourcePaths = StagedFiles.Select(f => f.FullPath);
-                    var success = await _mergeService.MergeFilesAsync(sourcePaths, saveFileDialog.FileName, "MASTER_ASSEMBLY");
-                    
-                    if (success) Status = "Merge Successful!";
-                    else Status = "Merge Failed - check logs";
-                }
-                catch (Exception ex)
-                {
-                    Status = $"Merge Error: {ex.Message}";
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            }
-        }
 
         public ImporterViewModel(IPlmXmlService plmXmlService, IPlmXmlAuditService auditService, IPlmXmlMergeService mergeService)
         {
@@ -65,7 +36,28 @@ namespace PlmXmlSyntax.ViewModels.Pages
             _mergeService = mergeService;
         }
 
-        private readonly IPlmXmlMergeService _mergeService;
+        partial void OnSelectedStagedFileChanged(ImportedFileInfo? value)
+        {
+            var view = System.Windows.Data.CollectionViewSource.GetDefaultView(LeafNodes);
+            if (view == null) return;
+
+            if (value == null)
+            {
+                view.Filter = null;
+            }
+            else
+            {
+                view.Filter = (item) =>
+                {
+                    if (item is LeafNodeInfo leaf)
+                    {
+                        return leaf.SourcePlmXmlPath == value.FullPath;
+                    }
+                    return false;
+                };
+            }
+            view.Refresh();
+        }
 
         [RelayCommand]
         private void OnAddFiles()
@@ -160,7 +152,6 @@ namespace PlmXmlSyntax.ViewModels.Pages
                     }
                 }
 
-                // Run Cross-File Analysis
                 Status = "Analyzing Collisions...";
                 var collisions = await _auditService.AnalyzeCrossFileCollisionsAsync(parsedDatasets);
                 if (collisions.Any())
@@ -185,6 +176,41 @@ namespace PlmXmlSyntax.ViewModels.Pages
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnMergeFiles()
+        {
+            if (StagedFiles.Count == 0) return;
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PLMXML files (*.plmxml)|*.plmxml",
+                FileName = "Merged_Assembly.plmxml"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                IsBusy = true;
+                Status = "Merging files...";
+                
+                try
+                {
+                    var sourcePaths = StagedFiles.Select(f => f.FullPath);
+                    var success = await _mergeService.MergeFilesAsync(sourcePaths, saveFileDialog.FileName, "MASTER_ASSEMBLY");
+                    
+                    if (success) Status = "Merge Successful!";
+                    else Status = "Merge Failed - check logs";
+                }
+                catch (Exception ex)
+                {
+                    Status = $"Merge Error: {ex.Message}";
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
     }

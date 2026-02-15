@@ -80,7 +80,9 @@
                 </ui:Button>
             </StackPanel>
 
-            <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" BorderThickness="0" Background="Transparent" MaxHeight="120" Padding="0,0,16,0">
+            <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" 
+                         SelectedItem="{Binding ViewModel.SelectedStagedFile, Mode=TwoWay}"
+                         BorderThickness="0" Background="Transparent" MaxHeight="120" Padding="0,0,16,0">
                 <ui:ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:ImportedFileInfo}">
                         <Grid HorizontalAlignment="Stretch" Margin="0,0,4,0">
