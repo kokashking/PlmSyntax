@@ -1,0 +1,10 @@
+<PLMXML author="TestSite" xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema">
+    <ProductDef>
+        <InstanceGraph id="graph1" rootInstanceRef="#id1">
+            <ProductRevisionView id="id2" instanceRefs="id10" name="TOP" type="assembly"/>
+            <!-- Missing id100 reference -->
+            <ProductInstance id="id10" name="Broken_Part" partRef="#id100"/>
+            <ProductInstance id="id1" name="ROOT" partRef="#id2"/>
+        </InstanceGraph>
+    </ProductDef>
+</PLMXML>

@@ -1,0 +1,14 @@
+<PLMXML author="TestSite" xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema">
+    <ProductDef>
+        <InstanceGraph id="graph1" rootInstanceRef="#id1">
+            <ProductRevisionView id="id2" instanceRefs="id10" name="TOP" type="assembly"/>
+            <!-- Points to a Revision, which points to a View -->
+            <ProductInstance id="id10" name="Indirect_Part" partRef="#id_rev"/>
+            <ProductInstance id="id1" name="ROOT" partRef="#id2"/>
+        </InstanceGraph>
+    </ProductDef>
+    <ProductRevision id="id_rev" instanceRefs="#id_view" name="Rev_A"/>
+    <ProductRevisionView id="id_view" name="Final_View" type="solid">
+        <Representation format="JT" id="rep1" location="part.jt"/>
+    </ProductRevisionView>
+</PLMXML>
