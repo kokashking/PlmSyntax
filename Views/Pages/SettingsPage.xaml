@@ -22,65 +22,65 @@
   </Page.Resources>
 
   <ScrollViewer>
-    <StackPanel Margin="24">
-        <TextBlock FontSize="24" FontWeight="Bold" Text="Configuration &amp; Profiles" Margin="0,0,0,24" />
+    <StackPanel Margin="12">
+        <TextBlock FontSize="20" FontWeight="Bold" Text="Configuration &amp; Profiles" Margin="0,0,0,12" />
 
         <!-- Profile Selection -->
-        <ui:CardControl Header="Active Parsing Profile" Margin="0,0,0,16">
+        <ui:CardControl Header="Active Parsing Profile" Margin="0,0,0,8">
             <StackPanel Orientation="Horizontal">
-                <ComboBox ItemsSource="{Binding ViewModel.Profiles}" 
+                <ComboBox ItemsSource="{Binding ViewModel.Profiles}"
                           SelectedItem="{Binding ViewModel.SelectedProfile}"
                           DisplayMemberPath="Name"
-                          Width="250" Margin="0,0,12,0"/>
-                <ui:Button Content="Save Changes" 
+                          Width="250" Margin="0,0,8,0"/>
+                <ui:Button Content="Save Changes"
                            Command="{Binding ViewModel.SaveProfileCommand}"
-                           Appearance="Primary" />
+                           Appearance="Primary" Padding="8,4" />
             </StackPanel>
         </ui:CardControl>
 
-        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Merge Engine Options" Margin="0,12,0,12" />
-        <ui:Card Margin="0,0,0,16">
-            <StackPanel Margin="16">
-                <TextBlock Text="Merge Strategy" Margin="0,0,0,8" FontWeight="Medium" />
+        <TextBlock FontSize="15" FontWeight="SemiBold" Text="Merge Engine Options" Margin="0,8,0,6" />
+        <ui:Card Margin="0,0,0,8">
+            <StackPanel Margin="10">
+                <TextBlock Text="Merge Strategy" Margin="0,0,0,4" FontWeight="Medium" />
                 <ComboBox ItemsSource="{Binding ViewModel.MergeStrategies}"
                           SelectedItem="{Binding ViewModel.SelectedProfile.ActiveMergeStrategy}"
-                          HorizontalAlignment="Left" Width="250" Margin="0,0,0,16" />
+                          HorizontalAlignment="Left" Width="250" Margin="0,0,0,8" />
 
-                <TextBlock Text="File Prefix Pattern" Margin="0,0,0,8" FontWeight="Medium" />
-                <ui:TextBox Text="{Binding ViewModel.SelectedProfile.MergePrefixPattern}" 
-                            PlaceholderText="F{0}_" Width="250" HorizontalAlignment="Left" Margin="0,0,0,8" />
-                <TextBlock Text="Use {0} for file index (e.g. F1_id1)" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <TextBlock Text="File Prefix Pattern" Margin="0,0,0,4" FontWeight="Medium" />
+                <ui:TextBox Text="{Binding ViewModel.SelectedProfile.MergePrefixPattern}"
+                            PlaceholderText="F{0}_" Width="250" HorizontalAlignment="Left" Margin="0,0,0,4" />
+                <TextBlock Text="Use {0} for file index (e.g. F1_id1)" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </StackPanel>
         </ui:Card>
 
-        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Parser Intelligence" Margin="0,12,0,12" />
-        <ui:Card Margin="0,0,0,16">
-            <StackPanel Margin="16">
-                <TextBlock Text="Root Search Heuristic" Margin="0,0,0,8" FontWeight="Medium" />
+        <TextBlock FontSize="15" FontWeight="SemiBold" Text="Parser Intelligence" Margin="0,8,0,6" />
+        <ui:Card Margin="0,0,0,8">
+            <StackPanel Margin="10">
+                <TextBlock Text="Root Search Heuristic" Margin="0,0,0,4" FontWeight="Medium" />
                 <ComboBox ItemsSource="{Binding ViewModel.RootSearchStrategies}"
                           SelectedItem="{Binding ViewModel.SelectedProfile.RootStrategy}"
-                          HorizontalAlignment="Left" Width="250" Margin="0,0,0,16" />
+                          HorizontalAlignment="Left" Width="250" Margin="0,0,0,8" />
 
-                <TextBlock Text="Part Number Source (UserData Title)" Margin="0,0,0,8" FontWeight="Medium" />
-                <ui:TextBox Text="{Binding ViewModel.SelectedProfile.PartNumberUserDataTitle}" 
+                <TextBlock Text="Part Number Source (UserData Title)" Margin="0,0,0,4" FontWeight="Medium" />
+                <ui:TextBox Text="{Binding ViewModel.SelectedProfile.PartNumberUserDataTitle}"
                             PlaceholderText="Mehrnummern" Width="250" HorizontalAlignment="Left" />
             </StackPanel>
         </ui:Card>
 
-        <TextBlock FontSize="18" FontWeight="SemiBold" Text="Guard &amp; IP Protection" Margin="0,12,0,12" />
-        <ui:Card Margin="0,0,0,24">
-            <StackPanel Margin="16">
-                <CheckBox Content="Scrub Usernames from Metadata" 
-                          IsChecked="{Binding ViewModel.SelectedProfile.ScrubUserNames}" Margin="0,0,0,12" />
-                <CheckBox Content="Hide Cost Attributes" 
+        <TextBlock FontSize="15" FontWeight="SemiBold" Text="Guard &amp; IP Protection" Margin="0,8,0,6" />
+        <ui:Card Margin="0,0,0,12">
+            <StackPanel Margin="10">
+                <CheckBox Content="Scrub Usernames from Metadata"
+                          IsChecked="{Binding ViewModel.SelectedProfile.ScrubUserNames}" Margin="0,0,0,6" />
+                <CheckBox Content="Hide Cost Attributes"
                           IsChecked="{Binding ViewModel.SelectedProfile.ScrubCosts}" />
             </StackPanel>
         </ui:Card>
 
-        <Separator Margin="0,0,0,24" />
+        <Separator Margin="0,0,0,12" />
 
-        <TextBlock FontSize="20" FontWeight="Medium" Text="Personalization" />
-        <TextBlock Margin="0,12,0,8" Text="Theme" />
+        <TextBlock FontSize="16" FontWeight="Medium" Text="Personalization" />
+        <TextBlock Margin="0,6,0,4" Text="Theme" />
         <RadioButton
           Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
           CommandParameter="theme_light"
@@ -89,7 +89,7 @@
           IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
         />
         <RadioButton
-          Margin="0,8,0,0"
+          Margin="0,4,0,0"
           Command="{Binding ViewModel.ChangeThemeCommand, Mode=OneWay}"
           CommandParameter="theme_dark"
           Content="Dark"
@@ -97,7 +97,7 @@
           IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
         />
 
-        <TextBlock Margin="0,24,0,8" FontSize="20" FontWeight="Medium" Text="About PlmXmlSyntax" />
+        <TextBlock Margin="0,12,0,4" FontSize="16" FontWeight="Medium" Text="About PlmXmlSyntax" />
         <TextBlock Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
     </StackPanel>
   </ScrollViewer>

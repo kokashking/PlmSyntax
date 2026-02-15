@@ -22,7 +22,7 @@
     <local:PathToFileNameConverter x:Key="PathToFileNameConverter"/>
   </Page.Resources>
 
-  <Grid Margin="16">
+  <Grid Margin="8">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" /> <!-- Toolbar & Staging -->
       <RowDefinition Height="Auto" /> <!-- Status -->
@@ -30,27 +30,29 @@
     </Grid.RowDefinitions>
 
     <!-- Header / Staging Area (Minimizable) -->
-    <Expander Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,12" IsExpanded="True">
-        <StackPanel Margin="8">
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+    <Expander Header="PLMXML Staging Area" Grid.Row="0" Margin="0,0,0,6" IsExpanded="True">
+        <StackPanel Margin="4">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                 <ui:Button
                     Command="{Binding ViewModel.AddFilesCommand, Mode=OneWay}"
                     Content="Add Files"
-                    Margin="0,0,8,0"
+                    Padding="8,4"
+                    Margin="0,0,4,0"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Add24" />
+                        <ui:SymbolIcon Symbol="Add24" FontSize="14" />
                     </ui:Button.Icon>
                 </ui:Button>
-                
+
                 <ui:Button
                     Appearance="Primary"
                     Command="{Binding ViewModel.StartImportCommand, Mode=OneWay}"
                     Content="Start Process"
-                    Margin="0,0,8,0"
+                    Padding="8,4"
+                    Margin="0,0,4,0"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Play24" />
+                        <ui:SymbolIcon Symbol="Play24" FontSize="14" />
                     </ui:Button.Icon>
                 </ui:Button>
 
@@ -58,10 +60,11 @@
                     Appearance="Primary"
                     Command="{Binding ViewModel.MergeFilesCommand, Mode=OneWay}"
                     Content="Merge Files"
-                    Margin="0,0,8,0"
+                    Padding="8,4"
+                    Margin="0,0,4,0"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="ArrowRouting24" />
+                        <ui:SymbolIcon Symbol="ArrowRouting24" FontSize="14" />
                     </ui:Button.Icon>
                 </ui:Button>
 
@@ -69,9 +72,10 @@
                     Appearance="Secondary"
                     Command="{Binding ViewModel.ClearFilesCommand, Mode=OneWay}"
                     Content="Clear All"
+                    Padding="8,4"
                 >
                     <ui:Button.Icon>
-                        <ui:SymbolIcon Symbol="Delete24" />
+                        <ui:SymbolIcon Symbol="Delete24" FontSize="14" />
                     </ui:Button.Icon>
                 </ui:Button>
             </StackPanel>
@@ -106,7 +110,7 @@
     </Expander>
 
     <!-- Status Bar -->
-    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,4">
         <TextBlock
             Text="{Binding ViewModel.Status, Mode=OneWay}"
             FontWeight="SemiBold"
@@ -143,7 +147,7 @@
             <Style TargetType="GridViewColumnHeader">
                 <Setter Property="Background" Value="{DynamicResource ControlFillColorDefaultBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-                <Setter Property="Padding" Value="8,4" />
+                <Setter Property="Padding" Value="6,2" />
                 <Setter Property="BorderThickness" Value="0,0,0,1" />
                 <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -151,9 +155,9 @@
         </ui:ListView.Resources>
         <ui:ListView.ItemContainerStyle>
             <Style TargetType="ListViewItem">
-                <Setter Property="Margin" Value="2,1" />
-                <Setter Property="Padding" Value="4" />
-                <Setter Property="MinHeight" Value="28" />
+                <Setter Property="Margin" Value="1,0" />
+                <Setter Property="Padding" Value="2" />
+                <Setter Property="MinHeight" Value="22" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

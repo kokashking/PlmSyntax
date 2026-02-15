@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using Wpf.Ui.Controls;
 
 namespace PlmXmlSyntax.ViewModels.Windows
@@ -14,14 +15,22 @@ namespace PlmXmlSyntax.ViewModels.Windows
             new NavigationViewItem()
             {
                 Content = "Importer",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowImport24 },
-                TargetPageType = typeof(Views.Pages.ImporterPage)
+                Icon = new SymbolIcon { Symbol = SymbolRegular.ArrowImport24, FontSize = 16 },
+                TargetPageType = typeof(Views.Pages.ImporterPage),
+                MinHeight = 32,
+                Padding = new Thickness(8, 4, 8, 4),
+                Margin = new Thickness(0, 1, 0, 1),
+                FontSize = 13
             },
             new NavigationViewItem()
             {
                 Content = "Explorer",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.TreeDeciduous20 },
-                TargetPageType = typeof(Views.Pages.DataPage)
+                Icon = new SymbolIcon { Symbol = SymbolRegular.TreeDeciduous20, FontSize = 16 },
+                TargetPageType = typeof(Views.Pages.DataPage),
+                MinHeight = 32,
+                Padding = new Thickness(8, 4, 8, 4),
+                Margin = new Thickness(0, 1, 0, 1),
+                FontSize = 13
             }
         };
 
@@ -31,8 +40,12 @@ namespace PlmXmlSyntax.ViewModels.Windows
             new NavigationViewItem()
             {
                 Content = "Settings",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
-                TargetPageType = typeof(Views.Pages.SettingsPage)
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24, FontSize = 16 },
+                TargetPageType = typeof(Views.Pages.SettingsPage),
+                MinHeight = 32,
+                Padding = new Thickness(8, 4, 8, 4),
+                Margin = new Thickness(0, 1, 0, 1),
+                FontSize = 13
             }
         };
 
