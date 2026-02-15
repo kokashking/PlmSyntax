@@ -8,6 +8,9 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <DefaultItemExcludes>$(DefaultItemExcludes);PlmXmlSyntax.Tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
