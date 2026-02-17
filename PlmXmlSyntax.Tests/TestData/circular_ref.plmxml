@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Circular reference: viewA -> instB -> viewB -> instA -> viewA (cycle) -->
+<!-- Parser must terminate without hanging -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="#instA">
+      <ProductInstance id="instA" name="Part_A" partRef="#viewA" />
+      <ProductInstance id="instB" name="Part_B" partRef="#viewB" />
+      <ProductRevisionView id="viewA" name="Assembly_A" type="assembly" instanceRefs="#instB" />
+      <ProductRevisionView id="viewB" name="Assembly_B" type="assembly" instanceRefs="#instA" />
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>

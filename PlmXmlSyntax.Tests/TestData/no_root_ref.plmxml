@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- No rootInstanceRef: heuristic should find the orphan root instance -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="">
+      <ProductInstance id="rootInst"  name="Root"  partRef="#rootView" />
+      <ProductInstance id="childInst" name="Child" partRef="#leafView" />
+      <ProductRevisionView id="rootView" name="Heuristic_Assembly" type="assembly" instanceRefs="#childInst" />
+      <ProductRevisionView id="leafView" name="Heuristic_Leaf"     type="part">
+        <Representation id="rep1" format="JT" location="heuristic.jt" />
+      </ProductRevisionView>
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>

@@ -1,14 +1,15 @@
-<PLMXML author="TestSite" xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema">
-    <ProductDef>
-        <InstanceGraph id="graph1" rootInstanceRef="#id1">
-            <ProductRevisionView id="id2" instanceRefs="id10" name="TOP" type="assembly"/>
-            <!-- Points to a Revision, which points to a View -->
-            <ProductInstance id="id10" name="Indirect_Part" partRef="#id_rev"/>
-            <ProductInstance id="id1" name="ROOT" partRef="#id2"/>
-        </InstanceGraph>
-    </ProductDef>
-    <ProductRevision id="id_rev" instanceRefs="#id_view" name="Rev_A"/>
-    <ProductRevisionView id="id_view" name="Final_View" type="solid">
-        <Representation format="JT" id="rep1" location="part.jt"/>
-    </ProductRevisionView>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Indirect link: ProductInstance -> ProductRevision -> ProductRevisionView -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductRevision id="rev1" name="Rev1" instanceRefs="#view1" />
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="#rootInst">
+      <ProductInstance id="rootInst" name="Root_Assembly" partRef="#rootView" />
+      <ProductInstance id="childInst" name="Child_Part"   partRef="#rev1" />
+      <ProductRevisionView id="rootView" name="Root_Assembly" type="assembly" instanceRefs="#childInst" />
+      <ProductRevisionView id="view1"   name="Final_View"    type="part">
+        <Representation id="rep1" format="JT" location="part.jt" />
+      </ProductRevisionView>
+    </InstanceGraph>
+  </ProductDef>
 </PLMXML>

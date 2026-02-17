@@ -3,7 +3,10 @@ using System.Windows.Media;
 using System.Globalization;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Linq;
 using PlmXmlSyntax.ViewModels.Pages;
+using PlmXmlSyntax.Models;
+using Wpf.Ui.Controls;
 using Wpf.Ui.Abstractions.Controls;
 
 namespace PlmXmlSyntax.Views.Pages
@@ -41,6 +44,19 @@ namespace PlmXmlSyntax.Views.Pages
                     parentScroll.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
                 }
             };
+        }
+
+        private void OnStagedFilesSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is Wpf.Ui.Controls.ListView listView)
+            {
+                var selectedPaths = listView.SelectedItems
+                    .Cast<ImportedFileInfo>()
+                    .Select(f => f.FullPath)
+                    .ToList();
+                
+                ViewModel.UpdateFilter(selectedPaths);
+            }
         }
 
         private ScrollViewer? GetParentScrollViewer(DependencyObject obj)
@@ -89,7 +105,6 @@ namespace PlmXmlSyntax.Views.Pages
             }
 
             var columnBinding = headerClicked.Column.DisplayMemberBinding as Binding;
-            // If the column uses a CellTemplate instead of DisplayMemberBinding, we need to map it manually
             var sortBy = columnBinding?.Path.Path ?? GetPropertyName(headerClicked.Column.Header as string);
 
             if (!string.IsNullOrEmpty(sortBy))
@@ -120,14 +135,12 @@ namespace PlmXmlSyntax.Views.Pages
             var dataView = CollectionViewSource.GetDefaultView(LeafNodesList.ItemsSource);
             if (dataView == null) return;
 
-            // Remember the selected item before sorting
             var selectedItem = LeafNodesList.SelectedItem;
 
             dataView.SortDescriptions.Clear();
             SortDescription sd = new SortDescription(sortBy, direction);
             dataView.SortDescriptions.Add(sd);
             
-            // Use Dispatcher to scroll to the selected item AFTER the UI has repositioned it
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 if (selectedItem != null)

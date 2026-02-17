@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- No instances at all - only views with geometry. Flat fallback should collect them. -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="">
+      <ProductRevisionView id="v1" name="Part_A" type="part">
+        <Representation format="JT" location="a.jt" />
+      </ProductRevisionView>
+      <ProductRevisionView id="v2" name="Part_B" type="part">
+        <Representation format="STEP" location="b.stp" />
+      </ProductRevisionView>
+      <ProductRevisionView id="v3" name="Empty_Assembly" type="assembly" instanceRefs="" />
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>

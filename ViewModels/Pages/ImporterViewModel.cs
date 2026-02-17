@@ -24,9 +24,6 @@ namespace PlmXmlSyntax.ViewModels.Pages
         private ObservableCollection<ImportedFileInfo> _stagedFiles = new();
 
         [ObservableProperty]
-        private ImportedFileInfo? _selectedStagedFile;
-
-        [ObservableProperty]
         private ObservableCollection<LeafNodeInfo> _leafNodes = new();
 
         public ImporterViewModel(IPlmXmlService plmXmlService, IPlmXmlAuditService auditService, IPlmXmlMergeService mergeService)
@@ -36,14 +33,16 @@ namespace PlmXmlSyntax.ViewModels.Pages
             _mergeService = mergeService;
         }
 
-        partial void OnSelectedStagedFileChanged(ImportedFileInfo? value)
+        public void UpdateFilter(IEnumerable<string> selectedPaths)
         {
             var view = System.Windows.Data.CollectionViewSource.GetDefaultView(LeafNodes);
             if (view == null) return;
 
-            if (value == null)
+            var pathSet = new HashSet<string>(selectedPaths);
+
+            if (pathSet.Count == 0)
             {
-                view.Filter = null;
+                view.Filter = null; // Show everything if nothing selected
             }
             else
             {
@@ -51,7 +50,7 @@ namespace PlmXmlSyntax.ViewModels.Pages
                 {
                     if (item is LeafNodeInfo leaf)
                     {
-                        return leaf.SourcePlmXmlPath == value.FullPath;
+                        return pathSet.Contains(leaf.SourcePlmXmlPath);
                     }
                     return false;
                 };

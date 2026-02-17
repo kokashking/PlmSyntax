@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part numbers in UserData should propagate from assembly down to leaves -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="#rootInst">
+      <ProductInstance id="rootInst"  name="Root"  partRef="#rootView" />
+      <ProductInstance id="childInst" name="Child" partRef="#leafView" />
+      <ProductRevisionView id="rootView" name="Assembly" type="assembly" instanceRefs="#childInst">
+        <UserData>
+          <UserValue title="Mehrnummern" value="PN-001" />
+        </UserData>
+      </ProductRevisionView>
+      <ProductRevisionView id="leafView" name="LeafPart" type="part">
+        <Representation format="JT" location="leaf.jt" />
+      </ProductRevisionView>
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>

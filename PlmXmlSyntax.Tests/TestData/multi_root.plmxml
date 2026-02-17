@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Two disconnected assembly trees, no rootInstanceRef -->
+<!-- Heuristic picks the first orphan (root1), root2 tree is NOT traversed -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="">
+      <ProductInstance id="root1"  name="Root1"  partRef="#view1" />
+      <ProductInstance id="child1" name="Child1" partRef="#leaf1" />
+      <ProductInstance id="root2"  name="Root2"  partRef="#view2" />
+      <ProductInstance id="child2" name="Child2" partRef="#leaf2" />
+      <ProductRevisionView id="view1" name="Assembly1" type="assembly" instanceRefs="#child1" />
+      <ProductRevisionView id="leaf1" name="Part1"     type="part">
+        <Representation format="JT" location="part1.jt" />
+      </ProductRevisionView>
+      <ProductRevisionView id="view2" name="Assembly2" type="assembly" instanceRefs="#child2" />
+      <ProductRevisionView id="leaf2" name="Part2"     type="part">
+        <Representation format="JT" location="part2.jt" />
+      </ProductRevisionView>
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>

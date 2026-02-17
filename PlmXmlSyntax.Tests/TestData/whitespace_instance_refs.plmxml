@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- instanceRefs contains only whitespace - should not crash, produce 0 leaves -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="#rootInst">
+      <ProductInstance id="rootInst" name="Root" partRef="#rootView" />
+      <ProductRevisionView id="rootView" name="Whitespace_Assembly" type="assembly" instanceRefs="   " />
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>

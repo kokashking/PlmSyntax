@@ -1,10 +1,11 @@
-<PLMXML author="TestSite" xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema">
-    <ProductDef>
-        <InstanceGraph id="graph1" rootInstanceRef="#id1">
-            <ProductRevisionView id="id2" instanceRefs="id10" name="TOP" type="assembly"/>
-            <!-- Missing id100 reference -->
-            <ProductInstance id="id10" name="Broken_Part" partRef="#id100"/>
-            <ProductInstance id="id1" name="ROOT" partRef="#id2"/>
-        </InstanceGraph>
-    </ProductDef>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dangling reference: child partRef points to nonexistent ID -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="#rootInst">
+      <ProductInstance id="rootInst"  name="Root_Assembly" partRef="#rootView" />
+      <ProductInstance id="childInst" name="Broken_Child"  partRef="#nonexistent_view" />
+      <ProductRevisionView id="rootView" name="Root_Assembly" type="assembly" instanceRefs="#childInst" />
+    </InstanceGraph>
+  </ProductDef>
 </PLMXML>

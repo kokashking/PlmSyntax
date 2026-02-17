@@ -1,12 +1,14 @@
-<PLMXML author="TestSite" xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema">
-    <ProductDef>
-        <InstanceGraph id="graph1" rootInstanceRef="#id1">
-            <ProductRevisionView id="id2" instanceRefs="id10" name="TOP" type="assembly"/>
-            <ProductInstance id="id10" name="PART_A" partRef="#id100"/>
-            <ProductRevisionView id="id100" name="Geometry_A" type="solid">
-                <Representation format="JT" id="rep1" location="part_a.jt"/>
-            </ProductRevisionView>
-            <ProductInstance id="id1" name="ROOT" partRef="#id2"/>
-        </InstanceGraph>
-    </ProductDef>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Standard 2-level assembly: root -> child -> leaf with geometry -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="#rootInst">
+      <ProductInstance id="rootInst" name="Root_Assembly" partRef="#rootView" />
+      <ProductInstance id="childInst" name="Child_Part"   partRef="#partView" />
+      <ProductRevisionView id="rootView" name="Root_Assembly" type="assembly" instanceRefs="#childInst" />
+      <ProductRevisionView id="partView" name="Geometry_A" type="part">
+        <Representation id="rep1" format="JT" location="part_a.jt" />
+      </ProductRevisionView>
+    </InstanceGraph>
+  </ProductDef>
 </PLMXML>

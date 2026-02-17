@@ -80,8 +80,10 @@
                 </ui:Button>
             </StackPanel>
 
-            <ui:ListView ItemsSource="{Binding ViewModel.StagedFiles}" 
-                         SelectedItem="{Binding ViewModel.SelectedStagedFile, Mode=TwoWay}"
+            <ui:ListView x:Name="StagedFilesList"
+                         ItemsSource="{Binding ViewModel.StagedFiles}" 
+                         SelectionChanged="OnStagedFilesSelectionChanged"
+                         SelectionMode="Extended"
                          BorderThickness="0" Background="Transparent" MaxHeight="120" Padding="0,0,16,0">
                 <ui:ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:ImportedFileInfo}">

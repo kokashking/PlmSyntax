@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- All refs without # prefix - parser trims # so both forms must work -->
+<PLMXML xmlns="http://www.plmxml.org/Schemas/PLMXMLSchema" author="TestExporter">
+  <ProductDef>
+    <InstanceGraph rootInstanceRef="rootInst">
+      <ProductInstance id="rootInst"  name="Root"  partRef="rootView" />
+      <ProductInstance id="childInst" name="Child" partRef="leafView" />
+      <ProductRevisionView id="rootView" name="Assembly" type="assembly" instanceRefs="childInst" />
+      <ProductRevisionView id="leafView" name="NoHash_Leaf" type="part">
+        <Representation format="JT" location="nohash.jt" />
+      </ProductRevisionView>
+    </InstanceGraph>
+  </ProductDef>
+</PLMXML>
