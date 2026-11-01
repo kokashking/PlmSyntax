@@ -94,3 +94,10 @@ mono_crash.*
 # Application-specific
 appsettings.local.json
 appsettings.*.local.json
+
+# Claude Code local settings
+.claude/
+
+# Private notes
+GEMINI.md
+plan.md

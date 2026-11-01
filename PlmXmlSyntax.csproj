@@ -35,8 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\wpfui-icon-256.png" />
-    <None Remove="Assets\wpfui-icon-1024.png" />
     <None Include="img\favicon\favicon-16x16.png" />
     <None Include="img\favicon\favicon-32x32.png" />
   </ItemGroup>
